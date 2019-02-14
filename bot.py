@@ -46,8 +46,10 @@ def add_shifts_command(message):
             cover_time = args[2]
             date = args[3]
 
+
+
             worksheet.append_row([date_asked, shift_id, name, date, cover_time, station])
-            to_send = name + ", you've requested your shift to be covered at " + station + " from " + cover_time + " on " + date + "\n" + "Accept Number: " + str(shift_id)
+            to_send = name + ", you've requested your shift to be covered at " + station + " from " + cover_time + " on " + str(date) + "\n" + "Accept Number: " + str(shift_id)
             post_params = {'bot_id' : config.bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
@@ -119,6 +121,8 @@ def unique_random_numbers():
 
 
 
+
+
 def main():
 
     while True:
@@ -143,6 +147,6 @@ def main():
 
 
 
-        time.sleep(5)
+        time.sleep(3)
 
 main()

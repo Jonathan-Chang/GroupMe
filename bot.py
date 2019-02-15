@@ -38,6 +38,7 @@ def add_shifts_command(message):
     for shift in shifts:
         args = shift.split(" ")
 
+        #If the user specifies the station of the shift
         if(len(args) == 4):
             date_asked = datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
             shift_id = unique_random_numbers()
@@ -53,7 +54,7 @@ def add_shifts_command(message):
             post_params = {'bot_id' : config.bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
-
+        #If the user doesn't specify the station of the shift
         elif (len(args) == 3):
             date_asked = datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -82,10 +83,11 @@ def accept_shift_command(message):
 
 
 
-    args = message['text'].split(" ")
 
-    if(len(args) == 2):
-        id_num = args[1]
+    args = message['text'].split(" ")
+    print(args)
+    if(len(args) >= 2):
+        for
         try:
             row_number = worksheet.find(id_num).row
             to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
@@ -101,7 +103,7 @@ def accept_shift_command(message):
 
 
     else:
-        to_send = "Invalid number of parameters: \n USAGE: /accept <accept-number>"
+        to_send = "Invalid number of parameters: \n USAGE: /accept <accept-number> <...>"
         post_params = {'bot_id' : config.bot_id, 'text': to_send}
         requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
@@ -111,21 +113,27 @@ def accept_shift_command(message):
 def unique_random_numbers():
     global random_number_list
     random_number = randint(1,100)
-
-    id_num_list = worksheet.col_values(2)
-    print(id_num_list)
-
-
     while random_number in random_number_list:
         random_number = randint(1,100)
-        print("wtf?")
-
     random_number_list.append(random_number)
     print(random_number_list)
     return random_number
 
 
+
+
+
+#Check for manual deletion in the spreadsheet
 def check_for_deletion():
+    id_list = worksheet.col_values(1)
+    for id in random_number_list:
+        if id not in id_list:
+            random_number_list.remove(id)
+
+
+#Delete rows after a certain time period
+#Look up Advanced Python Scheduler on Desktop
+def delete_rows_after_time():
 
 
 
@@ -149,6 +157,7 @@ def main():
                     request_params['since_id'] = message['id']
                     break
                 if message['text'].startswith("/add"):
+                    check_for_deletion()
                     add_shifts_command(message)
                     request_params['since_id'] = message['id']
 

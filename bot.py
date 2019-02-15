@@ -12,7 +12,7 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credential
 gc = gspread.authorize(credentials)
 worksheet = gc.open('Test').sheet1
 
-random_number_set = set()
+random_number_list = []
 
 
 #TEST
@@ -105,14 +105,27 @@ def accept_shift_command(message):
 
 
 # Generate unique random numbers so that shifts don't have the same ID number
+# Have to check the spreadsheet to see if any numbers that were once not available, available
 def unique_random_numbers():
+    global random_number_list
     random_number = randint(1,100)
-    while random_number in random_number_set:
+
+    id_num_list = worksheet.col_values(2)
+    print(id_num_list)
+
+
+    while random_number in random_number_list:
         random_number = randint(1,100)
+        print("wtf?")
+
+    random_number_list.append(random_number)
+    print(random_number_list)
     return random_number
 
 
-# Delete shifts automatically from the spreadsheet after a certain amount of time
+def check_for_deletion():
+
+
 
 
 
@@ -134,6 +147,7 @@ def main():
                 if message['text'].startswith("/add"):
                     add_shifts_command(message)
                     request_params['since_id'] = message['id']
+
                     break
                 if message['text'].startswith("/accept"):
                     accept_shift_command(message)
@@ -144,5 +158,8 @@ def main():
 
 
         time.sleep(5)
+
+        if response.status_code == 429:
+            time.sleep(5)
 
 main()

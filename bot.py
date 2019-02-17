@@ -80,47 +80,40 @@ def add_shifts_command(message):
 
 
 def accept_shift_command(message):
-
-
-
-
     args = message['text'].split(" ")
-    print(args)
-    if(len(args) >= 2):
-        for
-        try:
-            row_number = worksheet.find(id_num).row
-            to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
+    args.pop(0)
+
+    for accept_num in args:
+        if(accept_num.isdigit()):
+            try:
+                row_number = worksheet.find(accept_num).row
+                to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
+                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
+
+                worksheet.update_cell(row_number,7, message['name'])
+            except:
+                to_send = "Invalid ID Number! \n Please check the spreadsheet."
+                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
+
+        else:
+            to_send = "Invalid parameters: \n USAGE: /accept <accept-number> <...>"
             post_params = {'bot_id' : config.bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
-
-            worksheet.update_cell(row_number,7, message['name'])
-        except:
-            to_send = "Invalid ID Number! \n Please check the spreadsheet."
-            post_params = {'bot_id' : config.bot_id, 'text': to_send}
-            requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
-
-
-
-    else:
-        to_send = "Invalid number of parameters: \n USAGE: /accept <accept-number> <...>"
-        post_params = {'bot_id' : config.bot_id, 'text': to_send}
-        requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
 
 # Generate unique random numbers so that shifts don't have the same ID number
 # Have to check the spreadsheet to see if any numbers that were once not available, available
 def unique_random_numbers():
     global random_number_list
-    random_number = randint(1,100)
+    random_number = randint(1,3)
     while random_number in random_number_list:
-        random_number = randint(1,100)
+        random_number = randint(1,3)
+
     random_number_list.append(random_number)
     print(random_number_list)
     return random_number
-
-
-
 
 
 #Check for manual deletion in the spreadsheet
@@ -129,20 +122,6 @@ def check_for_deletion():
     for id in random_number_list:
         if id not in id_list:
             random_number_list.remove(id)
-
-
-#Delete rows after a certain time period
-#Look up Advanced Python Scheduler on Desktop
-def delete_rows_after_time():
-
-
-
-
-
-
-
-
-
 
 def main():
 

@@ -13,6 +13,8 @@ gc = gspread.authorize(credentials)
 worksheet = gc.open('Test').sheet1
 
 random_number_list = []
+unique_id_bottom = 1
+unique_id_top = 1000
 
 
 #TEST
@@ -64,7 +66,7 @@ def add_shifts_command(message):
             date = args[2]
 
 
-            to_send = name + ", you've requested your shift to be covered from " + cover_time + " on " + date + "\n" + "Accept Number: " + shift_id
+            to_send = name + ", you've requested your shift to be covered from " + cover_time + " on " + date + "\n" + "Accept Number: " + str(shift_id)
 
             post_params = {'bot_id' : config.bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
@@ -87,11 +89,18 @@ def accept_shift_command(message):
         if(accept_num.isdigit()):
             try:
                 row_number = worksheet.find(accept_num).row
-                to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
-                requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
+                if(worksheet.cell(row_number, 7).value == ''):
+                #print(type(worksheet.acell('G7').value))
+                    to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
+                    post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                    requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
+                    worksheet.update_cell(row_number,7, message['name'])
+                else:
+                    to_send = "Sorry, shift with ID " + accept_num + " has already been taken."
+                    post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                    requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
-                worksheet.update_cell(row_number,7, message['name'])
+
             except:
                 to_send = "Invalid ID Number! \n Please check the spreadsheet."
                 post_params = {'bot_id' : config.bot_id, 'text': to_send}
@@ -106,21 +115,37 @@ def accept_shift_command(message):
 # Generate unique random numbers so that shifts don't have the same ID number
 # Have to check the spreadsheet to see if any numbers that were once not available, available
 def unique_random_numbers():
+    count = 0
     global random_number_list
-    random_number = randint(1,3)
+    global unique_id_top
+    global unique_id_bottom
+
+    random_number = randint(unique_id_bottom, unique_id_top)
     while random_number in random_number_list:
-        random_number = randint(1,3)
+        random_number = randint(unique_id_bottom, unique_id_top)
+        # If for some reason we keep getting already used random numbers, we want to increment
+        # the range so that we can get a new unique number
+        if(count == 10):
+            unique_id_top += 5
+            random_number = randint(unique_id_bottom, unique_id_top)
+            count = 0
+        count += 1
+
 
     random_number_list.append(random_number)
-    print(random_number_list)
     return random_number
 
 
 #Check for manual deletion in the spreadsheet
 def check_for_deletion():
-    id_list = worksheet.col_values(1)
+    global random_number_list
+    # Gets all the IDs from the spreadsheet
+    id_list = worksheet.col_values(2)
+
+    #If the IDs in the random_number_list is not in the updated spreadsheet ID, that means it has been
+    #deleted, thus we need to remove it off the list so the unique id can be used again
     for id in random_number_list:
-        if id not in id_list:
+        if str(id) not in id_list:
             random_number_list.remove(id)
 
 def main():

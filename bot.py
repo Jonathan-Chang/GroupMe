@@ -10,7 +10,7 @@ request_params = {'token': config.bot_token}
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credentials_file_name, scope)
 gc = gspread.authorize(credentials)
-worksheet = gc.open('Test').sheet1
+
 
 random_number_list = []
 unique_id_bottom = 1
@@ -26,7 +26,7 @@ def show_shifts_command():
 
 
 def add_shifts_command(message):
-
+    worksheet = gc.open('Test').sheet1
 
     shifts = []
     ##If student puts multiple shifts in one message, it should be split by a new line
@@ -82,6 +82,7 @@ def add_shifts_command(message):
 
 
 def accept_shift_command(message):
+    worksheet = gc.open('Test').sheet1
     args = message['text'].split(" ")
     args.pop(0)
 
@@ -138,6 +139,7 @@ def unique_random_numbers():
 
 #Check for manual deletion in the spreadsheet
 def check_for_deletion():
+    worksheet = gc.open('Test').sheet1
     global random_number_list
     # Gets all the IDs from the spreadsheet
     id_list = worksheet.col_values(2)

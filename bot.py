@@ -5,11 +5,23 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import config
 from random import *
+import os
+import json
 
 request_params = {'token': config.bot_token}
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credentials_file_name, scope)
-gc = gspread.authorize(credentials)
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']\
+
+# TEMP EDITS? 
+json_creds = os.getenv("GOOGLE_SHEETS_CREDS")
+creds_dict = json.loads(json_creds)
+creds_dict["private_key"] = creds_dict["private_key"].replace("\\\\n", "\n")
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
+gc = gspread.authorize(creds)
+
+#
+#credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credentials_file_name, scope)
+#gc = gspread.authorize(credentials)
 
 
 random_number_list = []

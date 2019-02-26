@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import config
+#import config
 from random import *
 import os
 import json

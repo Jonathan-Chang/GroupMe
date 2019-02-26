@@ -8,7 +8,13 @@ from random import *
 import os
 import json
 
-request_params = {'token': config.bot_token}
+
+bot_token = os.getenv("BOT_TOKEN")
+bot_id = os.getenv("BOT_ID")
+groupchat_url = os.getenv("GROUPCHAT_URL")
+
+
+request_params = {'token': bot_token}
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']\
 
 # TEMP EDITS? 
@@ -20,6 +26,11 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 gc = gspread.authorize(creds)
 
 #
+
+
+
+
+
 #credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credentials_file_name, scope)
 #gc = gspread.authorize(credentials)
 
@@ -32,7 +43,7 @@ unique_id_top = 1000
 #TEST
 def show_shifts_command():
     to_send = "Please go to this link to see available shifts: https://docs.google.com/spreadsheets/d/1REpCAbxi9rU6mHWmvY94vKlBw-rnW12471cSAZw2vqg/edit#gid=0"
-    post_params = {'bot_id' : config.bot_id, 'text': to_send}
+    post_params = {'bot_id' : bot_id, 'text': to_send}
     requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
 
@@ -65,7 +76,7 @@ def add_shifts_command(message):
 
             worksheet.append_row([date_asked, shift_id, name, date, cover_time, station])
             to_send = name + ", you've requested your shift to be covered at " + station + " from " + cover_time + " on " + str(date) + "\n" + "Accept Number: " + str(shift_id)
-            post_params = {'bot_id' : config.bot_id, 'text': to_send}
+            post_params = {'bot_id' : bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
         #If the user doesn't specify the station of the shift
@@ -80,14 +91,14 @@ def add_shifts_command(message):
 
             to_send = name + ", you've requested your shift to be covered from " + cover_time + " on " + date + "\n" + "Accept Number: " + str(shift_id)
 
-            post_params = {'bot_id' : config.bot_id, 'text': to_send}
+            post_params = {'bot_id' : .bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
             worksheet.append_row([date_asked, shift_id, name, date, cover_time, "None Given"])
 
         else:
             to_send = "Invalid number of parameters: \n USAGE: /add <station> <cover-time> <date>\n\n If the <station> is unknown:\n USAGE: /add <cover-time> <date>"
-            post_params = {'bot_id' : config.bot_id, 'text': to_send}
+            post_params = {'bot_id' : bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
 
@@ -105,23 +116,23 @@ def accept_shift_command(message):
                 if(worksheet.cell(row_number, 7).value == ''):
                 #print(type(worksheet.acell('G7').value))
                     to_send = "[COVER] " + message['name'] + " wants to cover " + worksheet.cell(row_number, 3).value + " on " + worksheet.cell(row_number, 4).value + " from " + worksheet.cell(row_number, 5).value + "\n" + "Student Managers, please like this message to confirm"
-                    post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                    post_params = {'bot_id' : bot_id, 'text': to_send}
                     requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
                     worksheet.update_cell(row_number,7, message['name'])
                 else:
                     to_send = "Sorry, shift with ID " + accept_num + " has already been taken."
-                    post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                    post_params = {'bot_id' : bot_id, 'text': to_send}
                     requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
 
             except:
                 to_send = "Invalid ID Number! \n Please check the spreadsheet."
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                post_params = {'bot_id' : bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
         else:
             to_send = "Invalid parameters: \n USAGE: /accept <accept-number> <...>"
-            post_params = {'bot_id' : config.bot_id, 'text': to_send}
+            post_params = {'bot_id' : bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
 
@@ -165,7 +176,7 @@ def check_for_deletion():
 def main():
 
     while True:
-        response = requests.get(config.groupchat_url, params = request_params)
+        response = requests.get(groupchat_url, params = request_params)
         if response.status_code == 200:
             response_messages = response.json()['response']['messages']
             for message in response_messages:

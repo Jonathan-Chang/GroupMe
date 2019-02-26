@@ -2,6 +2,7 @@
 
 # Description
 This is a GroupMe bot that utilizes the API of GroupMe and Google Sheets to help students and student managers organize available shifts. By reading the messages in the group chat, the bot looks for commands and accordingly updates a Google sheet that is available to anyone with the link.
+It is currently deployed on Heroku.
 
 # Inspiration
 Student managers at Sodexo use the popular app, GroupMe, to communicate with student workers regarding available shifts.

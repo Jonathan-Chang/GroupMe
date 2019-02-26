@@ -199,7 +199,7 @@ def main():
 
 
 
-        time.sleep(3)
+        
 
         if response.status_code == 429:
             time.sleep(5)

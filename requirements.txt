@@ -1,5 +1,5 @@
 
-requsts
+requests
 gspread
 oauth2client
 random

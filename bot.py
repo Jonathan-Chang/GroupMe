@@ -91,7 +91,7 @@ def add_shifts_command(message):
 
             to_send = name + ", you've requested your shift to be covered from " + cover_time + " on " + date + "\n" + "Accept Number: " + str(shift_id)
 
-            post_params = {'bot_id' : .bot_id, 'text': to_send}
+            post_params = {'bot_id' : bot_id, 'text': to_send}
             requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
             worksheet.append_row([date_asked, shift_id, name, date, cover_time, "None Given"])

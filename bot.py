@@ -78,11 +78,11 @@ def add_shifts_command(message):
                 datetime.date(year_of_date, month_of_date, day_of_date)
                 worksheet.append_row([date_asked, shift_id, name, date, cover_time, station])
                 to_send = name + ", you've requested your shift to be covered at " + station + " from " + cover_time + " on " + str(date) + "\n" + "Accept Number: " + str(shift_id)
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                post_params = {'bot_id' : bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
             except ValueError:
                 to_send = "Invalid date!"
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                post_params = {'bot_id' : bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
         #If the user doesn't specify the station of the shift
@@ -100,12 +100,12 @@ def add_shifts_command(message):
                 datetime.date(year_of_date, month_of_date, day_of_date)
 
                 to_send = name + ", you've requested your shift to be covered from " + cover_time + " on " + date + "\n" + "Accept Number: " + str(shift_id)
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                post_params = {'bot_id' : bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
                 worksheet.append_row([date_asked, shift_id, name, date, cover_time, "None Given"])
             except:
                 to_send = "Invalid date!"
-                post_params = {'bot_id' : config.bot_id, 'text': to_send}
+                post_params = {'bot_id' : bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
         else:

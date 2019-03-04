@@ -1,6 +1,6 @@
 import requests
 import time
-from datetime import datetime
+import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 #import config
@@ -65,37 +65,37 @@ def add_shifts_command(message):
 
         #If the user specifies the station of the shift
         if(len(args) == 4):
-            date_asked = datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
+            date_asked = datetime.datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
             shift_id = unique_random_numbers()
             name = message['name']
             station = args[1]
             cover_time = args[2]
             try:
-                date = args[2]
-                month_of_date = date.split('/')[0]
-                day_of_date = date.split('/')[1]
+                date = args[3]
+                month_of_date = int(date.split('/')[0])
+                day_of_date = int(date.split('/')[1])
                 year_of_date = datetime.date.today().year
                 datetime.date(year_of_date, month_of_date, day_of_date)
                 worksheet.append_row([date_asked, shift_id, name, date, cover_time, station])
                 to_send = name + ", you've requested your shift to be covered at " + station + " from " + cover_time + " on " + str(date) + "\n" + "Accept Number: " + str(shift_id)
                 post_params = {'bot_id' : config.bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
-            except:
+            except ValueError:
                 to_send = "Invalid date!"
                 post_params = {'bot_id' : config.bot_id, 'text': to_send}
                 requests.post('https://api.groupme.com/v3/bots/post', params = post_params)
 
         #If the user doesn't specify the station of the shift
         elif (len(args) == 3):
-            date_asked = datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
+            date_asked = datetime.datetime.utcfromtimestamp(int(message['created_at'])).strftime('%Y-%m-%d %H:%M:%S')
 
             shift_id = unique_random_numbers()
             name = message['name']
             cover_time = args[1]
             try:
                 date = args[2]
-                month_of_date = date.split('/')[0]
-                day_of_date = date.split('/')[1]
+                month_of_date = int(date.split('/')[0])
+                day_of_date = int(date.split('/')[1])
                 year_of_date = datetime.date.today().year
                 datetime.date(year_of_date, month_of_date, day_of_date)
 
@@ -211,7 +211,7 @@ def main():
 
 
 
-        
+
 
         if response.status_code == 429:
             time.sleep(5)

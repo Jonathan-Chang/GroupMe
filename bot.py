@@ -28,9 +28,6 @@ gc = gspread.authorize(creds)
 #
 
 
-
-
-
 #credentials = ServiceAccountCredentials.from_json_keyfile_name(config.credentials_file_name, scope)
 #gc = gspread.authorize(credentials)
 
@@ -191,28 +188,59 @@ def check_for_deletion():
         if str(id) not in id_list:
             random_number_list.remove(id)
 
+
+
+#Checks for ID of old commands in the second sheet of the Google sheets so that commands don't get called twice when the bot restarts!
+#Return false is ID is new and true if the ID is old
+def check_for_old_commands(id):
+    message_id_worksheet = gc.open('Test').sheet2
+    try:
+        cell = message_id_worksheet.find(id)
+        return True
+    except:
+        row_and_column = find_empty_cell()
+        worksheet.update_cell(row_and_column[0],row_and_column[1], id)
+        return False
+
+
+def find_empty_cell():
+    message_id_worksheet = gc.open('Test').sheet2
+    for row in range(1,1001):
+        for column in range(1,27):
+            if message_id_worksheet.cell(row,column).value = '':
+                return [row,column]
+
+
+
+
+
+
+
 def main():
 
     while True:
         response = requests.get(groupchat_url, params = request_params)
         if response.status_code == 200:
             response_messages = response.json()['response']['messages']
-            
+
             for message in response_messages:
 
                 if message['text'] == "/shifts":
-                    show_shifts_command()
-                    request_params['after_id'] = message['id']
+                    if check_for_old_commands(message['id']) == False:
+                        show_shifts_command()
+                        request_params['since_id'] = message['id']
                     break
                 if message['text'].startswith("/add"):
-                    check_for_deletion()
-                    add_shifts_command(message)
-                    request_params['after_id'] = message['id']
+                    if check_for_old_commands(message['id']) == False:
+                        check_for_deletion()
+                        add_shifts_command(message)
+                        request_params['since_id'] = message['id']
 
                     break
                 if message['text'].startswith("/accept"):
-                    accept_shift_command(message)
-                    request_params['after_id'] = message['id']
+                    if check_for_old_commands(message['id']) == False:
+                        accept_shift_command(message)
+                        request_params['since_id'] = message['id']
                     break
 
 

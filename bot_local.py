@@ -176,6 +176,7 @@ def main():
         response = requests.get(config.groupchat_url, params = request_params)
         if response.status_code == 200:
             response_messages = response.json()['response']['messages']
+            print(response_messages)
             for message in response_messages:
 
                 if message['text'] == "/shifts":

@@ -195,17 +195,17 @@ def main():
 
                 if message['text'] == "/shifts":
                     show_shifts_command()
-                    request_params['since_id'] = message['id']
+                    request_params['after_id'] = message['id']
                     break
                 if message['text'].startswith("/add"):
                     check_for_deletion()
                     add_shifts_command(message)
-                    request_params['since_id'] = message['id']
+                    request_params['after_id'] = message['id']
 
                     break
                 if message['text'].startswith("/accept"):
                     accept_shift_command(message)
-                    request_params['since_id'] = message['id']
+                    request_params['after_id'] = message['id']
                     break
 
 

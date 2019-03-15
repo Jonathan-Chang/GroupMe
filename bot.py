@@ -193,7 +193,7 @@ def check_for_deletion():
 #Checks for ID of old commands in the second sheet of the Google sheets so that commands don't get called twice when the bot restarts!
 #Return false is ID is new and true if the ID is old
 def check_for_old_commands(id):
-    message_id_worksheet = gc.open('Test').sheet2
+    message_id_worksheet = gc.open('Test').get_worksheet(1)
     try:
         cell = message_id_worksheet.find(id)
         return True
@@ -204,7 +204,7 @@ def check_for_old_commands(id):
 
 
 def find_empty_cell():
-    message_id_worksheet = gc.open('Test').sheet2
+    message_id_worksheet = gc.open('Test').get_worksheet(1)
     for row in range(1,1001):
         for column in range(1,27):
             if(message_id_worksheet.cell(row,column).value == ''):

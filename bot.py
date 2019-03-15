@@ -199,7 +199,7 @@ def check_for_old_commands(id):
         return True
     except:
         row_and_column = find_empty_cell()
-        worksheet.update_cell(row_and_column[0],row_and_column[1], id)
+        message_id_worksheet.update_cell(row_and_column[0],row_and_column[1], id)
         return False
 
 

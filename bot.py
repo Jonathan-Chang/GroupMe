@@ -207,7 +207,7 @@ def find_empty_cell():
     message_id_worksheet = gc.open('Test').sheet2
     for row in range(1,1001):
         for column in range(1,27):
-            if message_id_worksheet.cell(row,column).value = '':
+            if(message_id_worksheet.cell(row,column).value == ''):
                 return [row,column]
 
 
